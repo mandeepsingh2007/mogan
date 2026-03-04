@@ -666,20 +666,39 @@ tree 或 #f
              (insert-go-to (tree-copy by*) (path-end by* '())))
            #t))))
 
+(define replace-search-max-limit 1000000)
+
+(define (replace-next-selection-after-start sels cur)
+  (cond ((or (null? sels) (null? (cdr sels))) #f)
+        ((path-less-eq? cur (car sels))
+         (list (car sels) (cadr sels)))
+        (else (replace-next-selection-after-start (cddr sels) cur))))
+
+(define (replace-move-to-next-after mid-p)
+  (and-with sel (replace-next-selection-after-start
+                  (get-alt-selection "alternate")
+                  mid-p)
+    (selection-set-range-set sel)
+    (go-to* (car sel))
+    (set-search-reference (car sel))
+    (update-search-pos-text "next")
+    #t))
+
+(define (replace-search-next-after mid-p)
+  (let loop ((limit 100))
+    (set-search-reference mid-p)
+    (set! search-serial (+ search-serial 1))
+    (perform-search-sub limit #t)
+    (cond ((replace-move-to-next-after mid-p) #t)
+          ((>= limit replace-search-max-limit) #f)
+          (else (loop (* 2 limit))))))
+
 (define (replace-next by)
-  ;; TODO: replacing all occurrences of 'a' by 'axa' may result in
-  ;; a segmentation fault.  We may wish to protect against that
   (with old-p (cursor-path)
     (and (replace-next* by)
          (with mid-p (cursor-path)
-           (perform-search*)
-           (with new-p (cursor-path)
-             (or (and (path-less? old-p new-p)
-                      ;; (path-less? mid-p new-p)
-                      ;; Commenting fixes bug #62534
-                      ;; Check also bug #59508
-                      )
-                 (search-next-match #t)))))))
+           (and (replace-search-next-after mid-p)
+                (path-less? old-p (cursor-path)))))))
 
 (tm-define (replace-one . args)
   (let ((u    (if (null? args) (master-buffer)  (car args)))
