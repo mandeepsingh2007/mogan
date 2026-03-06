@@ -8,6 +8,6 @@
 
 #include "tree.hpp"
 
-tree markdown_to_tree(string s);
+tree markdown_to_tree (string s);
 
 #endif // defined MARKDOWN_H
