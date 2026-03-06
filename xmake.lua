@@ -232,6 +232,7 @@ add_requires("freetype "..FREETYPE_VERSION, {system=false, configs={png=true}})
 add_requireconfs("liii-pdfhummus.freetype", {version = FREETYPE_VERSION, system = false, configs={png=true}, override=true})
 
 add_requires("argh v1.3.2")
+add_requires("md4c")
 
 --- package: qt6widgets
 QT6_VERSION="6.8.3"
@@ -638,6 +639,7 @@ target("libmogan") do
     add_packages("freetype")
     add_packages("s7")
     add_packages("argh")
+    add_packages("md4c")
     if not is_plat("macosx") then
         add_packages("libiconv")
     end

@@ -12,7 +12,7 @@ typedef int64_t s7_int;
 typedef double s7_double;
 
 #ifndef __cplusplus
-#ifndef _MSC_VER
+#if !defined(_MSC_VER) || (_MSC_VER >= 1800)
   #include <stdbool.h>
 #else
 #ifndef true

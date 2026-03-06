@@ -12,6 +12,7 @@
 #include "Generic/input.hpp"
 #include "convert.hpp"
 #include "converter.hpp"
+#include "Markdown/markdown.hpp"
 #include "file.hpp"
 #include "hashmap.hpp"
 #include "image_files.hpp"
@@ -310,7 +311,7 @@ void
 texmacs_input_rep::markdown_flush (bool force) {
   // ignore: empty buf in markdown is meaningless
   if (force && !is_empty (buf)) {
-    write (generic_to_tree (buf, "markdown-snippet"));
+    write (markdown_to_tree (buf));
     buf= "";
   }
 }
